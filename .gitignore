@@ -1,0 +1,77 @@
+# Binários compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Arquivos de teste
+*.test
+
+# Arquivos de cobertura de teste
+*.out
+*.prof
+
+# Arquivos de build e dependências
+/vendor/
+go.work
+go.work.sum
+
+# Arquivos temporários do Go
+*.tmp
+
+# Logs
+*.log
+
+# Arquivos do sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Arquivos de configuração local
+.env
+.env.local
+.env.*.local
+config.local.*
+
+# Certificados e chaves
+*.pem
+*.key
+*.crt
+*.p12
+
+# Diretórios de build personalizados
+/bin/
+/build/
+/dist/
+
+# Air (live reload)
+tmp/
+
+# Arquivos de profiling
+cpu.prof
+mem.prof
+block.prof
+mutex.prof
+
+# Arquivos gerados
+*.pb.go
+*_gen.go
+
+# Docker
+.dockerignore
+
+# Kubernetes
+*.yaml.bak
+*.yml.bak
