@@ -51,13 +51,30 @@ func main() {
 			return
 		}
 
-		// Validação simples
 		if input.Name == "" || input.CPF == "" || input.Score < 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Campos inválidos"})
 			return
 		}
 
-		// Salvar no banco
+		var existing ScoreEntry
+		result := db.Where("cpf = ?", input.CPF).First(&existing)
+
+		if result.Error == nil {
+			// CPF já existe: atualizar pontuação se a nova for maior
+			if input.Score > existing.Score {
+				existing.Score = input.Score
+				existing.Name = input.Name // opcional: atualiza nome também
+				if err := db.Save(&existing).Error; err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar pontuação"})
+					return
+				}
+				c.JSON(http.StatusOK, gin.H{"message": "Pontuação atualizada"})
+			} else {
+				c.JSON(http.StatusOK, gin.H{"message": "Pontuação menor ou igual à anterior. Nada foi alterado."})
+			}
+			return
+		}
+
 		if err := db.Create(&input).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao salvar no banco"})
 			return
