@@ -38,9 +38,9 @@ func main() {
 
 	// Habilitar CORS (para funcionamento com o frontend)
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST"},
-		AllowHeaders: []string{"Content-Type"},
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
 	}))
 
 	// POST /csbc - cadastrar pontuação
@@ -63,7 +63,7 @@ func main() {
 			// CPF já existe: atualizar pontuação se a nova for maior
 			if input.Score > existing.Score {
 				existing.Score = input.Score
-				existing.Name = input.Name // opcional: atualiza nome também
+				existing.Name = input.Name
 				if err := db.Save(&existing).Error; err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar pontuação"})
 					return
@@ -97,6 +97,15 @@ func main() {
 		})
 
 		c.JSON(http.StatusOK, entries)
+	})
+
+	r.DELETE("/csbc", func(c *gin.Context) {
+		if err := db.Exec("DELETE FROM score_entries").Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao limpar ranking"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Ranking limpo com sucesso"})
 	})
 
 	// Iniciar servidor
